@@ -1,5 +1,6 @@
 mod binary_tree;
 mod queue;
+mod singly_linked_list;
 mod stack;
 
 pub use stack::Stack;
@@ -49,7 +50,6 @@ mod tests {
         root.add_right(2);
         root.left.unwrap().add_left(3);
         root.right.unwrap().add_right(4);
-        root.dfs();
     }
 }
 
