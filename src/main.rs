@@ -1,3 +1,4 @@
+mod LRS;
 mod binary_tree;
 mod queue;
 mod singly_linked_list;
