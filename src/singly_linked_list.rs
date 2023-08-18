@@ -25,11 +25,6 @@ impl<T: Clone> Singly_Linked_List<T> {
     fn push(&mut self, value: T) {
         if let Some(tail) = &mut self.tail {
             tail.borrow_mut().push(value);
-            // Tail should always have a next, since we had it in the previous line
-            // TODO:
-            // self.tail = tail.next;
-            // somehow, idk how to do this
-            // I think I need to use Rc::clone() or something
         } else {
             self.head = Some(Node::new(value));
             self.tail = self.head.clone();
