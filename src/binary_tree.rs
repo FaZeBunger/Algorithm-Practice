@@ -1,60 +1,63 @@
-use std::cell::RefCell;
-use std::rc::{self, Rc};
-
-type Link<T> = Option<Rc<RefCell<ListNode<T>>>>;
-
-struct ListNode<T> {
-    item: T,
-    next: Link<T>,
-    prev: Link<T>,
+#[derive(Debug, Clone)]
+pub struct Node<T: Clone> {
+    pub value: Option<T>,
+    pub left: Option<Box<Node<T>>>,
+    pub right: Option<Box<Node<T>>>,
 }
 
-impl<T> ListNode<T> {
-    pub fn new(item: T) -> Rc<RefCell<Self>> {
-        Rc::new(RefCell::new(ListNode {
-            item,
-            next: None,
-            prev: None,
-        }))
-    }
+#[derive(Debug, Clone)]
+pub struct BinaryTree<T: Clone> {
+    pub root: Node<T>,
 }
 
-pub struct DoublyLinkedList<T> {
-    head: Link<T>,
-    tail: Link<T>,
-    size: usize,
-}
-
-impl<T> DoublyLinkedList<T> {
+#[allow(dead_code)]
+impl<T: Clone + std::fmt::Debug> BinaryTree<T> {
     pub fn new() -> Self {
-        Self {
-            head: None,
-            tail: None,
-            size: 0,
-        }
-    }
-
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
-    pub fn len(&self) -> usize {
-        self.size
-    }
-
-    pub fn push_back(&mut self, item: T) {
-        let node = Rc::new(RefCell::new(ListNode::new(item)));
-        if let Some(prev_tail) = self.tail.take() {
-            prev_tail.borrow_mut().next = Some(Rc::clone(&node));
-            node.borrow_mut().prev = Some(prev_tail);
-            self.tail = Some(node);
-            self.size += 1;
-        } else {
-            self.head = Some(Rc::clone(&node));
-            self.tail = Some(node);
-            self.size = 1;
+        BinaryTree {
+            root: Node::new(None),
         }
     }
 }
 
-fn main() {}
+#[allow(dead_code)]
+impl<T: Clone + std::fmt::Debug> Node<T> {
+    pub fn new(value: Option<T>) -> Self {
+        Node {
+            value,
+            left: None,
+            right: None,
+        }
+    }
+
+    pub fn add_left(&mut self, value: T) -> &mut Node<T> {
+        self.left = Some(Box::new(Node::new(Some(value))));
+        self.left.as_mut().unwrap()
+    }
+
+    pub fn add_right(&mut self, value: T) -> &mut Node<T> {
+        self.right = Some(Box::new(Node::new(Some(value))));
+        self.right.as_mut().unwrap()
+    }
+
+    pub fn dfs(&self) {
+        // Performs a depth-first traversal of the tree
+        // and adds the value of each node to a vector
+        let left = self.left.as_ref().unwrap();
+        let right = self.right.as_ref().unwrap();
+
+        if left.value.is_some() {
+            println!("{:?}", left.value);
+        }
+        if right.value.is_some() {
+            println!("{:?}", right.value);
+        }
+
+        if left.left.is_some() || left.right.is_some() {
+            left.as_ref().dfs();
+        }
+
+        if right.left.is_some() || right.right.is_some() {
+            right.as_ref().dfs();
+        }
+    }
+}
